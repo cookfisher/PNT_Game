@@ -8,11 +8,35 @@ BETA = inf
 
 
 class Node:
-    def __init__(self, tokens, last_move, depth, e):
-        self.tokens = tokens
+    def __init__(self, tokens_remain, last_move, depth, e):
+        self.tokens_remain = tokens_remain
         self.last_move = last_move
         self.depth = depth
         self.e = e
+
+def create_node(tokens_remain, last_move, depth, e):
+    return Node(tokens_remain, last_move, depth, e)
+
+# all possible nodes
+def findChildNodes(parent_node, turn, num_of_tokens):
+    tokens_remain = parent_node.tokens_remain
+    last_move = parent_node.last_move
+    length = len(tokens_remain)
+    child_nodes = []
+    # At the first move
+    if turn == 1:
+        for token in tokens_remain:
+            if token < length/2 and token % 2 == 1:
+                tokens_remain.remove(token)
+                e = evaluation(turn, tokens_remain, last_move, num_of_tokens)
+                child_node = create_node(tokens_remain, token, parent_node.depth + 1, e)
+                child_nodes.append(child_node)
+    # At subsequent moves
+    else:
+        child_node = 0
+
+    return child_nodes
+
 
 
 def generate_list(number):
@@ -186,12 +210,14 @@ def maxPrimeFactors (n):
     return int(max_prime)
 
 
-# all possible nodes
-def findChildNodes(tokens_remain):
-    child_nodes = []
-    return child_nodes
 
-# Driver Code
+
+
+# ----------Driver Code----------
+#test
 generate_list(4)
 is_prime(31)
 maxPrimeFactors(105)
+
+# PNT
+turn = 1
