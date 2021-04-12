@@ -91,7 +91,8 @@ def move():
 def evaluation(turn, tokens_remain, last_move, num_of_tokens):
     e = 0
     # game end
-    if len(tokens_remain) ==0:
+    child_nodes = findChildNodes(tokens_remain)
+    if len(tokens_remain) == 0 or len(child_nodes) == 0:
         #Player A (MAX) wins: 1.0, Player B (MIN) wins: -1.0
         if turn % 2 == 0:   #min's turn & game finish
             e = 1.0
@@ -106,7 +107,7 @@ def evaluation(turn, tokens_remain, last_move, num_of_tokens):
             return e
         # last move was 1
         if last_move == 1:
-            child_nodes = findChildNodes(tokens_remain)
+            #child_nodes = findChildNodes(tokens_remain)
             if len(child_nodes) % 2 == 1:
                 e = 0.5
             elif len(child_nodes) % 2 == 0:
@@ -114,7 +115,7 @@ def evaluation(turn, tokens_remain, last_move, num_of_tokens):
             return e
         # last move is a prime
         if is_prime(last_move):
-            child_nodes = findChildNodes(tokens_remain)
+            #child_nodes = findChildNodes(tokens_remain)
             if len(child_nodes) % 2 == 1:
                 e = 0.7
             elif len(child_nodes) % 2 == 0:
@@ -143,7 +144,7 @@ def evaluation(turn, tokens_remain, last_move, num_of_tokens):
             return e
         # last move was 1
         if last_move == 1:
-            child_nodes = findChildNodes(tokens_remain)
+            #child_nodes = findChildNodes(tokens_remain)
             if len(child_nodes) % 2 == 1:
                 e = -0.5
             elif len(child_nodes) % 2 == 0:
@@ -151,7 +152,7 @@ def evaluation(turn, tokens_remain, last_move, num_of_tokens):
             return e
         # last move is a prime
         if is_prime(last_move):
-            child_nodes = findChildNodes(tokens_remain)
+            #child_nodes = findChildNodes(tokens_remain)
             if len(child_nodes) % 2 == 1:
                 e = -0.7
             elif len(child_nodes) % 2 == 0:
