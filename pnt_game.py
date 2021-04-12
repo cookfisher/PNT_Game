@@ -17,7 +17,7 @@ class Node:
 def create_node(tokens_remain, last_move, depth, e):
     return Node(tokens_remain, last_move, depth, e)
 
-# all possible nodes
+# all possible nodes/choices
 def findChildNodes(parent_node, turn, num_of_tokens):
     tokens_remain = parent_node.tokens_remain
     last_move = parent_node.last_move
@@ -37,6 +37,23 @@ def findChildNodes(parent_node, turn, num_of_tokens):
 
     return child_nodes
 
+def find_multiples_factors(num, tokens_remain):
+    factors_multiples = []
+    # factors
+    for i in range(1, num + 1):
+        if num % i == 0:
+            factors_multiples.append(i)
+    # multiples
+    multiplier = 2
+    n = num
+    while n < len(tokens_remain):
+        n *= multiplier
+        if n <= len(tokens_remain):
+            factors_multiples.append(n)
+            multiplier += 1
+            n = num
+    print(num, "'s factors and multiples in #", len(tokens_remain), ": ", factors_multiples)
+    return factors_multiples
 
 
 def generate_list(number):
@@ -82,10 +99,6 @@ def min_max(child_nodes, depth, alpha, beta, maximizingPlayer):
                 break
         return min_value
 
-
-def move():
-
-    return 0
 
 
 def evaluation(turn, tokens_remain, last_move, num_of_tokens):
@@ -191,7 +204,7 @@ def is_prime(n):
                 print("Is prime = ", False)
                 return False
             i = i + 6
-        print("Is prime = ", True)
+        print(n, "is prime =", True)
         return True
 
 def maxPrimeFactors (n):
@@ -207,18 +220,17 @@ def maxPrimeFactors (n):
             n = n / i
     if n > 2:
         max_prime = n
-    print("Max_prime_factor: ", max_prime)
+    print("max_prime_factor: ", max_prime)
     return int(max_prime)
-
-
 
 
 
 # ----------Driver Code----------
 #test
-generate_list(4)
+test_list = generate_list(12)
 is_prime(31)
 maxPrimeFactors(105)
+find_multiples_factors(4,test_list)
 
 # PNT
 turn = 1
