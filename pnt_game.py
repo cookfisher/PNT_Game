@@ -15,6 +15,8 @@ class Node:
         self.last_move = last_move
         self.depth = depth
         self.e = 0
+        self.children = []
+
 
 
 def create_node(tokens_remain, parent_node, last_move, depth):
@@ -50,6 +52,7 @@ def findChildNodes(parent_node, turns, num_of_tokens):
                 #child_node.e = e
                 child_nodes.append(child_node)
     print("Children of", parent_node.tokens_remain, "=", len(child_nodes))
+    #parent_node.children = child_nodes
     return child_nodes
 
 
@@ -89,9 +92,10 @@ def is_max_turn(taken_tokens):
         return False
 
 
-def min_max(child_nodes, depth, alpha, beta, maximizingPlayer):
+def min_max(node, depth, alpha, beta, maximizingPlayer):
+    child_nodes = node.children
     # If depth is 0, search to end game states and return the index of player.
-    if depth == 0:
+    if depth == 0 or len(child_nodes) == 0:
         return maximizingPlayer
 
     # The player is max
