@@ -1,3 +1,4 @@
+import copy
 import math
 
 from numpy import inf
@@ -8,36 +9,52 @@ BETA = inf
 
 
 class Node:
-    def __init__(self, tokens_remain, last_move, depth, e):
+    def __init__(self, tokens_remain, parent, last_move, depth):
         self.tokens_remain = tokens_remain
+        self.parent = parent
         self.last_move = last_move
         self.depth = depth
-        self.e = e
+        self.e = 0
 
-def create_node(tokens_remain, last_move, depth, e):
-    return Node(tokens_remain, last_move, depth, e)
+
+def create_node(tokens_remain, parent_node, last_move, depth):
+    return Node(tokens_remain, parent_node, last_move, depth)
+    # return Node(tokens_remain, parent_node, last_move, depth, e)
+
 
 # all possible nodes/choices
-def findChildNodes(parent_node, turn, num_of_tokens):
+def findChildNodes(parent_node, turns, num_of_tokens):
     tokens_remain = parent_node.tokens_remain
     last_move = parent_node.last_move
     length = len(tokens_remain)
     child_nodes = []
     # At the first move
-    if turn == 1:
-        for token in tokens_remain:
-            if token < length/2 and token % 2 == 1:
-                tokens_remain.remove(token)
-                e = evaluation(turn, tokens_remain, last_move, num_of_tokens)
-                child_node = create_node(tokens_remain, token, parent_node.depth + 1, e)
+    if turns == 1:
+        for move in tokens_remain:
+            if move < length/2 and move % 2 == 1:
+                new_tokens_remain = copy.deepcopy(tokens_remain)
+                new_tokens_remain.remove(move)
+                child_node = create_node(new_tokens_remain, parent_node, move, parent_node.depth + 1)
+                #e = evaluation(turns, child_node, last_move, num_of_tokens)
+                #child_node.e = e
                 child_nodes.append(child_node)
     # At subsequent moves
     else:
-        child_node = 0
-
+        possible_moves = find_multiples_or_factors(parent_node.last_move, parent_node.tokens_remain)
+        for move in tokens_remain:
+            if move in possible_moves:
+                new_tokens_remain = copy.deepcopy(tokens_remain)
+                new_tokens_remain.remove(move)
+                child_node = create_node(new_tokens_remain, parent_node, move, parent_node.depth + 1)
+                #e = evaluation(turns, child_node, last_move, num_of_tokens)
+                #child_node.e = e
+                child_nodes.append(child_node)
+    print("Children of", parent_node.tokens_remain, "=", len(child_nodes))
     return child_nodes
 
-def find_multiples_factors(num, tokens_remain):
+
+# return list of all multiples and factors
+def find_multiples_or_factors(num, tokens_remain):
     factors_multiples = []
     # factors
     for i in range(1, num + 1):
@@ -52,7 +69,7 @@ def find_multiples_factors(num, tokens_remain):
             factors_multiples.append(n)
             multiplier += 1
             n = num
-    print(num, "'s factors and multiples in #", len(tokens_remain), ": ", factors_multiples)
+    print(num, "'s factors and multiples in", tokens_remain, ": ", factors_multiples)
     return factors_multiples
 
 
@@ -100,22 +117,21 @@ def min_max(child_nodes, depth, alpha, beta, maximizingPlayer):
         return min_value
 
 
-
-def evaluation(turn, tokens_remain, last_move, num_of_tokens):
+def evaluation(turns, node, last_move, num_of_tokens):
     e = 0
     # game end
-    child_nodes = findChildNodes(tokens_remain)
-    if len(tokens_remain) == 0 or len(child_nodes) == 0:
+    child_nodes = findChildNodes(node, turns, num_of_tokens)
+    if len(node.tokens_remain) == 0 or len(child_nodes) == 0:
         #Player A (MAX) wins: 1.0, Player B (MIN) wins: -1.0
-        if turn % 2 == 0:   #min's turn & game finish
+        if turns % 2 == 0:   #min's turn & game finish
             e = 1.0
         else:               #max's turn & game finish
             e = -1.0
         return e
     # max turn
-    if turn % 2 == 1:
+    if turns % 2 == 1:
         # token 1 is not taken yet
-        if 1 in tokens_remain:
+        if 1 in node.tokens_remain:
             e = 0
             return e
         # last move was 1
@@ -150,9 +166,9 @@ def evaluation(turn, tokens_remain, last_move, num_of_tokens):
                 e = -0.6
             return e
     # min turn
-    if turn % 2 == 0:
+    if turns % 2 == 0:
         # token 1 is not taken yet
-        if 1 in tokens_remain:
+        if 1 in node.tokens_remain:
             e = 0
             return e
         # last move was 1
@@ -220,7 +236,7 @@ def maxPrimeFactors (n):
             n = n / i
     if n > 2:
         max_prime = n
-    print("max_prime_factor: ", max_prime)
+    print("max_prime_factor:", max_prime)
     return int(max_prime)
 
 
@@ -228,9 +244,16 @@ def maxPrimeFactors (n):
 # ----------Driver Code----------
 #test
 test_list = generate_list(12)
+test_list2 = [1, 3, 4, 7, 8, 10]
+
 is_prime(31)
-maxPrimeFactors(105)
-find_multiples_factors(4,test_list)
+maxPrimeFactors(25)
+find_multiples_or_factors(4,test_list)
+
+start_node = create_node(test_list, None, 0, 0)
+children = findChildNodes(start_node, 1, len(test_list))
+
+#evaluation(1, test_list2, 2, len(test_list))
 
 # PNT
 turn = 1
