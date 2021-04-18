@@ -129,10 +129,41 @@ def generate_list(number):
 
 def is_max_turn(taken_tokens):
     # taken_tokens is list
-    if len(taken_tokens) % 2 == 1:
+    if len(taken_tokens) % 2 == 0:
         return True
     else:
         return False
+
+
+# ---------------------------------back up-------------------------------------------
+def min_max(node, depth, alpha, beta, maximizingPlayer):
+    child_nodes = node.children
+    # If depth is 0, search to end game states and return the index of player.
+    if depth == 0 or len(child_nodes) == 0:
+        return maximizingPlayer
+
+    # The player is max
+    if maximizingPlayer:
+        max_value = -inf
+        for child in child_nodes:
+            eval = min_max(child, depth - 1, alpha, beta, False)
+            max_value = max(max_value, eval)
+            alpha = max(alpha, eval)
+            # If beta is less or equal to alpha, break the loop
+            if beta <= alpha:
+                break
+        return max_value
+            # recursive for the children
+    else:
+        min_value = inf
+        for child in child_nodes:
+            eval = min_max(child, depth - 1, alpha, beta, True)
+            min_value = min(min_value, eval)
+            beta = min(beta, eval)
+            if beta <= alpha:
+                break
+        return min_value
+
 
 
 def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
@@ -141,13 +172,15 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
 
     #test children
     for node in child_nodes:
-        print("Node", node.tokens_remain, "Depth", node.depth)
+        print(node.tokens_remain)
+    print("alpha_beta_search depth =", depth)
 
     # If depth is 0, search to end game states and return the index of player.
     if depth == 0 or len(child_nodes) == 0:
+        #print("Node", node.tokens_remain, "Node Depth", node.depth)
         e = evaluation(maximizingPlayer, node, node.last_move)
         #best_state = node
-        #print("Move:", best_state.last_move)
+        print("Move:", node.last_move)
         return e
         #return maximizingPlayer
 
@@ -161,9 +194,9 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
             # If beta is less or equal to alpha, break the loop
             if alpha >= beta:
                 break
-            else:
-                best_state = child
-        print("Move:", best_state.last_move)
+            #else:
+                #best_state = child
+                #print("Move:", best_state.last_move)
         print("Max =", max_value)
         return max_value
             # recursive for the children
@@ -175,9 +208,9 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
             beta = min(beta, min_value)
             if beta <= alpha:
                 break
-            else:
-                best_state = child
-        print("Move:", best_state.last_move)
+            #else:
+                #best_state = child
+                #print("Move:", best_state.last_move)
         print("Min =", min_value)
         return min_value
 
@@ -366,17 +399,21 @@ find_prime_multiples(3, nodes, True)
 find_prime_multiples(3, nodes, False)
 print()
 
-# test tree
-turn = 4
-#start = create_node(input2, None, 1, 0)
-start = create_node(input3, None, 6, 0)
-c1 = findChildNodes(start, turn)
-build_tree(start, c1)
-
 # e(n)
 #test_node = create_node(test_list2, None, 0, 0)
 #test_node.children = nodes
 #evaluation(3, test_node, 5)
 
 # PNT
-alpha_beta_search(start_node, 4, ALPHA, BETA, True)
+turn = 2
+start1 = create_node(input2, None, 1, 0)
+start2 = create_node(input3, None, 6, 0)
+c1 = findChildNodes(start1, turn)
+build_tree(start1, c1)
+#child1 = start.children[1]
+#child2 = child1.children[1]
+#print(child2.tokens_remain)
+print()
+isMaxTurn = is_max_turn([1])
+alpha_beta_search(start1, 2, ALPHA, BETA, isMaxTurn)
+#alpha_beta_search(start2, 4, ALPHA, BETA, True)
