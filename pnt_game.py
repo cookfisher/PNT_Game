@@ -37,8 +37,8 @@ def findChildNodes(parent_node, turns, num_of_tokens):
                 new_tokens_remain = copy.deepcopy(tokens_remain)
                 new_tokens_remain.remove(move)
                 child_node = create_node(new_tokens_remain, parent_node, move, parent_node.depth + 1)
-                #e = evaluation(turns, child_node, last_move, num_of_tokens)
-                #child_node.e = e
+                e = evaluation(turns, child_node, last_move, num_of_tokens)
+                child_node.e = e
                 child_nodes.append(child_node)
     # At subsequent moves
     else:
@@ -48,8 +48,8 @@ def findChildNodes(parent_node, turns, num_of_tokens):
                 new_tokens_remain = copy.deepcopy(tokens_remain)
                 new_tokens_remain.remove(move)
                 child_node = create_node(new_tokens_remain, parent_node, move, parent_node.depth + 1)
-                #e = evaluation(turns, child_node, last_move, num_of_tokens)
-                #child_node.e = e
+                e = evaluation(turns, child_node, last_move, num_of_tokens)
+                child_node.e = e
                 child_nodes.append(child_node)
     print("Children of", parent_node.tokens_remain, "=", len(child_nodes))
     #parent_node.children = child_nodes
@@ -184,7 +184,7 @@ def evaluation(turns, node, last_move, num_of_tokens):
                 e = 0.5
             return e
         # last move is a prime
-        if is_prime(last_move):
+        if is_prime(last_move): ##TODO: fix counts in all successors
             #child_nodes = findChildNodes(tokens_remain)
             if len(child_nodes) % 2 == 1:
                 e = -0.7
@@ -196,7 +196,7 @@ def evaluation(turns, node, last_move, num_of_tokens):
             largest_prime = maxPrimeFactors(last_move)
             count = 0
             multiplier = 1
-            while largest_prime < num_of_tokens:
+            while largest_prime < num_of_tokens: ##TODO: max in tokens list
                 count += 1
                 multiplier += 1
                 largest_prime *= multiplier
@@ -247,15 +247,19 @@ def maxPrimeFactors (n):
 
 # ----------Driver Code----------
 #test
+# test_list = [5]
+# test_list = generate_list(7)
 test_list = generate_list(12)
 test_list2 = [1, 3, 4, 7, 8, 10]
-
+#
 is_prime(31)
 maxPrimeFactors(25)
 find_multiples_or_factors(4,test_list)
 
 start_node = create_node(test_list, None, 0, 0)
-children = findChildNodes(start_node, 1, len(test_list))
+children = findChildNodes(start_node, 3, len(test_list))
+for i in children:
+    print(i.tokens_remain)
 
 #evaluation(1, test_list2, 2, len(test_list))
 
