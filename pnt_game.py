@@ -135,7 +135,7 @@ def is_max_turn(taken_tokens):
         return False
 
 
-def min_max(node, depth, alpha, beta, maximizingPlayer):
+def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
     best_state = None
     child_nodes = node.children
     # If depth is 0, search to end game states and return the index of player.
@@ -146,7 +146,7 @@ def min_max(node, depth, alpha, beta, maximizingPlayer):
     if maximizingPlayer:
         max_value = -inf
         for child in child_nodes:
-            eval = min_max(child, depth - 1, alpha, beta, False)
+            eval = alpha_beta_search(child, depth - 1, alpha, beta, False)
             max_value = max(max_value, eval)
             alpha = max(alpha, eval)
             # If beta is less or equal to alpha, break the loop
@@ -158,7 +158,7 @@ def min_max(node, depth, alpha, beta, maximizingPlayer):
     else:
         min_value = inf
         for child in child_nodes:
-            eval = min_max(child, depth - 1, alpha, beta, True)
+            eval = alpha_beta_search(child, depth - 1, alpha, beta, True)
             min_value = min(min_value, eval)
             beta = min(beta, eval)
             if beta <= alpha:
@@ -170,7 +170,7 @@ def min_max(node, depth, alpha, beta, maximizingPlayer):
 def evaluation(turns, node, last_move, num_of_tokens):
     e = 0
     # game end
-    child_nodes = findChildNodes(node, turns, num_of_tokens)
+    child_nodes = findChildNodes(node, turns)
     if len(node.tokens_remain) == 0 or len(child_nodes) == 0:
         #Player A (MAX) wins: 1.0, Player B (MIN) wins: -1.0
         if turns % 2 == 0:   #min's turn & game finish
