@@ -17,6 +17,30 @@ class Node:
         self.e = 0
         self.children = []
 
+        def addNode(self, obj):
+            self.children.append(obj)
+            self.depth += 1
+
+        def addNodes(self, obj):
+            self.children.extend(obj)
+            self.depth += 1
+
+        def setLast_move(self, last_move):
+            self.last_move = last_move
+
+        def setDepth(self, depth):
+            self.depth = depth
+
+        def get_tokens(self):
+            return self.tokens_remain
+
+        def getChildNodes(self):
+            return self.children
+
+        def getRemainTokens(self, parent, last_move):
+            new_tokens_remain = copy.deepcopy(parent)
+            new_tokens_remain.remove(last_move)
+            return new_tokens_remain
 
 
 def create_node(tokens_remain, parent_node, last_move, depth):
@@ -25,9 +49,9 @@ def create_node(tokens_remain, parent_node, last_move, depth):
 
 
 # all possible nodes/choices
-def findChildNodes(parent_node, turns, num_of_tokens):
+def findChildNodes(parent_node, turns): # , num_of_tokens
     tokens_remain = parent_node.tokens_remain
-    last_move = parent_node.last_move
+    #last_move = parent_node.last_move
     length = len(tokens_remain)
     child_nodes = []
     # At the first move
@@ -51,9 +75,26 @@ def findChildNodes(parent_node, turns, num_of_tokens):
                 #e = evaluation(turns, child_node, last_move, num_of_tokens)
                 #child_node.e = e
                 child_nodes.append(child_node)
+
     print("Children of", parent_node.tokens_remain, "=", len(child_nodes))
-    #parent_node.children = child_nodes
+    for i in range(len(child_nodes)):
+        print(child_nodes[i].tokens_remain)
+
+    parent_node.children = child_nodes
     return child_nodes
+
+
+def build_tree(start_node, c1):
+    #c1 = findChildNodes(start_node,turn)
+    if c1:
+        for i in c1:
+            c2 = findChildNodes(i, turn+1)
+            #if c2:
+                #i.addNodes(c2)
+        return build_tree(start_node, c2)
+    else:
+        print("TREE BUILT")
+        return
 
 
 # return list of all multiples and factors,
@@ -95,6 +136,7 @@ def is_max_turn(taken_tokens):
 
 
 def min_max(node, depth, alpha, beta, maximizingPlayer):
+    best_state = None
     child_nodes = node.children
     # If depth is 0, search to end game states and return the index of player.
     if depth == 0 or len(child_nodes) == 0:
@@ -110,6 +152,7 @@ def min_max(node, depth, alpha, beta, maximizingPlayer):
             # If beta is less or equal to alpha, break the loop
             if beta <= alpha:
                 break
+        print(max_value)
         return max_value
             # recursive for the children
     else:
@@ -120,6 +163,7 @@ def min_max(node, depth, alpha, beta, maximizingPlayer):
             beta = min(beta, eval)
             if beta <= alpha:
                 break
+        print(min_value)
         return min_value
 
 
@@ -280,7 +324,7 @@ def maxPrimeFactors (n):
 
 # ----------Driver Code----------
 #test
-test_list = generate_list(12)
+test_list = generate_list(7)
 test_list2 = [1, 3, 4, 7, 8, 10]
 
 is_prime(31)
@@ -291,7 +335,7 @@ start_node = create_node(test_list, None, 0, 0)
 second_node = create_node([3,6,7,9,12], start_node, 1, 1)
 third_node = create_node([3,4,5,7], start_node, 1, 1)
 
-children = findChildNodes(start_node, 1, len(test_list))
+#children = findChildNodes(start_node, 1)
 
 #evaluation(1, test_list2, 2, len(test_list))
 
@@ -300,5 +344,9 @@ nodes = [second_node, third_node]
 find_prime_multiples(3, nodes, True)
 find_prime_multiples(3, nodes, False)
 
-# PNT
+#test tree
 turn = 1
+c1 = findChildNodes(start_node, 1)
+build_tree(start_node, c1)
+
+# PNT
