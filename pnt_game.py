@@ -115,7 +115,7 @@ def find_multiples_or_factors(num, tokens_remain):
             factors_multiples.append(n)
             multiplier += 1
             n = num
-    print(num, "'s factors and multiples in", tokens_remain, ": ", factors_multiples)
+    print(num, "'s all factors and multiples (include taken token) in", tokens_remain, ": ", factors_multiples)
     return factors_multiples
 
 
@@ -170,7 +170,8 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
 def evaluation(turns, node, last_move, num_of_tokens):
     e = 0
     # game end
-    child_nodes = findChildNodes(node, turns)
+    #child_nodes = findChildNodes(node, turns)
+    child_nodes = node.children
     if len(node.tokens_remain) == 0 or len(child_nodes) == 0:
         #Player A (MAX) wins: 1.0, Player B (MIN) wins: -1.0
         if turns % 2 == 0:   #min's turn & game finish
@@ -204,7 +205,7 @@ def evaluation(turns, node, last_move, num_of_tokens):
         #the last move is not prime
         else:
             largest_prime = maxPrimeFactors(last_move)
-            prime_multiples = find_prime_multiples(largest_prime, child_nodes,False)
+            prime_multiples = find_prime_multiples(largest_prime, child_nodes, False)
 
             #count = 0
             #multiplier = 1
@@ -235,7 +236,7 @@ def evaluation(turns, node, last_move, num_of_tokens):
         # last move is a prime
         if is_prime(last_move):
             #child_nodes = findChildNodes(tokens_remain)
-            prime_multiples = find_prime_multiples(last_move, child_nodes)
+            prime_multiples = find_prime_multiples(last_move, child_nodes, True)
             if prime_multiples % 2 == 1:
                 e = -0.7
             elif prime_multiples % 2 == 0:
