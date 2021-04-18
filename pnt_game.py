@@ -56,19 +56,21 @@ def findChildNodes(parent_node, turns, num_of_tokens):
     return child_nodes
 
 
-# return list of all multiples and factors
+# return list of all multiples and factors,
+# add (and XXX in tokens_remain) if want to return the elements in token_remain only
 def find_multiples_or_factors(num, tokens_remain):
     factors_multiples = []
     # factors
     for i in range(1, num + 1):
-        if num % i == 0:
+        mod = num % i
+        if mod == 0:
             factors_multiples.append(i)
     # multiples
     multiplier = 2
     n = num
-    while n < len(tokens_remain):
+    while n < max(tokens_remain):
         n *= multiplier
-        if n <= len(tokens_remain):
+        if n <= max(tokens_remain):
             factors_multiples.append(n)
             multiplier += 1
             n = num
@@ -102,7 +104,7 @@ def min_max(node, depth, alpha, beta, maximizingPlayer):
     if maximizingPlayer:
         max_value = -inf
         for child in child_nodes:
-            eval = min_max(child, depth - 1, alpha, beta, False)        #--------why depth-1 not+1?-----------
+            eval = min_max(child, depth - 1, alpha, beta, False)
             max_value = max(max_value, eval)
             alpha = max(alpha, eval)
             # If beta is less or equal to alpha, break the loop
@@ -149,24 +151,27 @@ def evaluation(turns, node, last_move, num_of_tokens):
         # last move is a prime
         if is_prime(last_move):
             #child_nodes = findChildNodes(tokens_remain)
-            if len(child_nodes) % 2 == 1:
+            prime_multiples = find_prime_multiples(last_move, child_nodes, True)
+            if prime_multiples % 2 == 1:
                 e = 0.7
-            elif len(child_nodes) % 2 == 0:
+            elif prime_multiples % 2 == 0:
                 e = -0.7
             return e
         #the last move is not prime
         else:
             largest_prime = maxPrimeFactors(last_move)
-            count = 0
-            multiplier = 1
-            while largest_prime < num_of_tokens:
-                count += 1
-                multiplier += 1
-                largest_prime *= multiplier
+            prime_multiples = find_prime_multiples(largest_prime, child_nodes,False)
 
-            if count % 2 == 1:
+            #count = 0
+            #multiplier = 1
+            #while largest_prime < num_of_tokens:
+                #count += 1
+                #multiplier += 1
+                #largest_prime *= multiplier
+
+            if prime_multiples % 2 == 1:
                 e = 0.6
-            elif count % 2 == 0:
+            elif prime_multiples % 2 == 0:
                 e = -0.6
             return e
     # min turn
@@ -186,24 +191,27 @@ def evaluation(turns, node, last_move, num_of_tokens):
         # last move is a prime
         if is_prime(last_move):
             #child_nodes = findChildNodes(tokens_remain)
-            if len(child_nodes) % 2 == 1:
+            prime_multiples = find_prime_multiples(last_move, child_nodes)
+            if prime_multiples % 2 == 1:
                 e = -0.7
-            elif len(child_nodes) % 2 == 0:
+            elif prime_multiples % 2 == 0:
                 e = 0.7
             return e
         # the last move is not prime
         else:
             largest_prime = maxPrimeFactors(last_move)
-            count = 0
-            multiplier = 1
-            while largest_prime < num_of_tokens:
-                count += 1
-                multiplier += 1
-                largest_prime *= multiplier
+            prime_multiples = find_prime_multiples(largest_prime, child_nodes, False)
 
-            if count % 2 == 1:
+            # count = 0
+            # multiplier = 1
+            # while largest_prime < num_of_tokens:
+            # count += 1
+            # multiplier += 1
+            # largest_prime *= multiplier
+
+            if prime_multiples % 2 == 1:
                 e = -0.6
-            elif count % 2 == 0:
+            elif prime_multiples % 2 == 0:
                 e = 0.6
             return e
 
@@ -226,6 +234,31 @@ def is_prime(n):
             i = i + 6
         print(n, "is prime =", True)
         return True
+
+
+def find_prime_multiples(num, child_nodes, is_prime):
+    num_of_multiples = 0
+    multiplier = 1
+    list_multiples = []
+    for node in child_nodes:
+        copy_tokens_remain = copy.deepcopy(node.tokens_remain)
+        n = num
+
+        if is_prime == True:
+            multiplier = 2
+        elif is_prime == False:
+            multiplier = 1
+
+        while n < max(copy_tokens_remain):
+            n *= multiplier
+            if n <= max(copy_tokens_remain) and n in copy_tokens_remain:
+                list_multiples.append(n)
+                num_of_multiples += 1
+                multiplier += 1
+                n = num
+    print("Find prime multiples in all children =", num_of_multiples, ":",list_multiples)
+    return num_of_multiples
+
 
 def maxPrimeFactors (n):
     max_prime = -1
@@ -252,12 +285,20 @@ test_list2 = [1, 3, 4, 7, 8, 10]
 
 is_prime(31)
 maxPrimeFactors(25)
-find_multiples_or_factors(4,test_list)
+find_multiples_or_factors(4,test_list2)
 
 start_node = create_node(test_list, None, 0, 0)
+second_node = create_node([3,6,7,9,12], start_node, 1, 1)
+third_node = create_node([3,4,5,7], start_node, 1, 1)
+
 children = findChildNodes(start_node, 1, len(test_list))
 
 #evaluation(1, test_list2, 2, len(test_list))
+
+# test find_prime_multiples
+nodes = [second_node, third_node]
+find_prime_multiples(3, nodes, True)
+find_prime_multiples(3, nodes, False)
 
 # PNT
 turn = 1
