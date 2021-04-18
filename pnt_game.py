@@ -78,7 +78,7 @@ def findChildNodes(parent_node, turns): # , num_of_tokens
 
     print("Children of", parent_node.tokens_remain, "=", len(child_nodes))
     for i in range(len(child_nodes)):
-        print(child_nodes[i].tokens_remain)
+        print(child_nodes[i].tokens_remain, "move =", child_nodes[i].last_move, "depth = ", child_nodes[i].depth)
 
     parent_node.children = child_nodes
     return child_nodes
@@ -138,52 +138,69 @@ def is_max_turn(taken_tokens):
 def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
     best_state = None
     child_nodes = node.children
+
+    #test children
+    for node in child_nodes:
+        print("Node", node.tokens_remain, "Depth", node.depth)
+
     # If depth is 0, search to end game states and return the index of player.
     if depth == 0 or len(child_nodes) == 0:
-        return maximizingPlayer
+        e = evaluation(maximizingPlayer, node, node.last_move)
+        #best_state = node
+        #print("Move:", best_state.last_move)
+        return e
+        #return maximizingPlayer
 
     # The player is max
     if maximizingPlayer:
         max_value = -inf
         for child in child_nodes:
-            eval = alpha_beta_search(child, depth - 1, alpha, beta, False)
-            max_value = max(max_value, eval)
-            alpha = max(alpha, eval)
+            max_value = alpha_beta_search(child, depth - 1, alpha, beta, False)
+            #max_value = max(max_value, eval)
+            alpha = max(alpha, max_value)
             # If beta is less or equal to alpha, break the loop
-            if beta <= alpha:
+            if alpha >= beta:
                 break
-        print(max_value)
+            else:
+                best_state = child
+        print("Move:", best_state.last_move)
+        print("Max =", max_value)
         return max_value
             # recursive for the children
     else:
         min_value = inf
         for child in child_nodes:
-            eval = alpha_beta_search(child, depth - 1, alpha, beta, True)
-            min_value = min(min_value, eval)
-            beta = min(beta, eval)
+            min_value = alpha_beta_search(child, depth - 1, alpha, beta, True)
+            #min_value = min(min_value, eval)
+            beta = min(beta, min_value)
             if beta <= alpha:
                 break
-        print(min_value)
+            else:
+                best_state = child
+        print("Move:", best_state.last_move)
+        print("Min =", min_value)
         return min_value
 
 
-def evaluation(turns, node, last_move, num_of_tokens):
+def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
     e = 0
     # game end
     #child_nodes = findChildNodes(node, turns)
     child_nodes = node.children
     if len(node.tokens_remain) == 0 or len(child_nodes) == 0:
         #Player A (MAX) wins: 1.0, Player B (MIN) wins: -1.0
-        if turns % 2 == 0:   #min's turn & game finish
+        if isMaxTurn == False:   #min's turn & game finish /turns % 2 == 0
             e = 1.0
         else:               #max's turn & game finish
             e = -1.0
+        print("Value =", e)
         return e
     # max turn
-    if turns % 2 == 1:
+    if isMaxTurn == True: # turns % 2 == 1
         # token 1 is not taken yet
         if 1 in node.tokens_remain:
             e = 0
+            print("Value =", e)
             return e
         # last move was 1
         if last_move == 1:
@@ -192,6 +209,7 @@ def evaluation(turns, node, last_move, num_of_tokens):
                 e = 0.5
             elif len(child_nodes) % 2 == 0:
                 e = -0.5
+            print("Value =", e)
             return e
         # last move is a prime
         if is_prime(last_move):
@@ -201,6 +219,7 @@ def evaluation(turns, node, last_move, num_of_tokens):
                 e = 0.7
             elif prime_multiples % 2 == 0:
                 e = -0.7
+            print("Value =", e)
             return e
         #the last move is not prime
         else:
@@ -218,9 +237,10 @@ def evaluation(turns, node, last_move, num_of_tokens):
                 e = 0.6
             elif prime_multiples % 2 == 0:
                 e = -0.6
+            print("Value =", e)
             return e
     # min turn
-    if turns % 2 == 0:
+    if isMaxTurn == False:
         # token 1 is not taken yet
         if 1 in node.tokens_remain:
             e = 0
@@ -232,6 +252,7 @@ def evaluation(turns, node, last_move, num_of_tokens):
                 e = -0.5
             elif len(child_nodes) % 2 == 0:
                 e = 0.5
+            print("Value =", e)
             return e
         # last move is a prime
         if is_prime(last_move):
@@ -241,6 +262,7 @@ def evaluation(turns, node, last_move, num_of_tokens):
                 e = -0.7
             elif prime_multiples % 2 == 0:
                 e = 0.7
+            print("Value =", e)
             return e
         # the last move is not prime
         else:
@@ -258,6 +280,7 @@ def evaluation(turns, node, last_move, num_of_tokens):
                 e = -0.6
             elif prime_multiples % 2 == 0:
                 e = 0.6
+            print("Value =", e)
             return e
 
 
@@ -322,11 +345,12 @@ def maxPrimeFactors (n):
     return int(max_prime)
 
 
-
 # ----------Driver Code----------
 #test
 test_list = generate_list(7)
-test_list2 = [1, 3, 4, 7, 8, 10]
+test_list2 = [2, 3, 4, 7, 8, 10]
+input2 = [2, 3, 4, 5, 6, 7]
+input3 = [1, 3, 5, 7, 8, 9, 10]
 
 is_prime(31)
 maxPrimeFactors(25)
@@ -336,18 +360,23 @@ start_node = create_node(test_list, None, 0, 0)
 second_node = create_node([3,6,7,9,12], start_node, 1, 1)
 third_node = create_node([3,4,5,7], start_node, 1, 1)
 
-#children = findChildNodes(start_node, 1)
-
-#evaluation(1, test_list2, 2, len(test_list))
-
 # test find_prime_multiples
 nodes = [second_node, third_node]
 find_prime_multiples(3, nodes, True)
 find_prime_multiples(3, nodes, False)
+print()
 
-#test tree
-turn = 1
-c1 = findChildNodes(start_node, 1)
-build_tree(start_node, c1)
+# test tree
+turn = 4
+#start = create_node(input2, None, 1, 0)
+start = create_node(input3, None, 6, 0)
+c1 = findChildNodes(start, turn)
+build_tree(start, c1)
+
+# e(n)
+#test_node = create_node(test_list2, None, 0, 0)
+#test_node.children = nodes
+#evaluation(3, test_node, 5)
 
 # PNT
+alpha_beta_search(start_node, 4, ALPHA, BETA, True)
