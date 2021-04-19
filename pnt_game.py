@@ -9,13 +9,14 @@ BETA = inf
 
 
 class Node:
-    def __init__(self, tokens_remain, parent, last_move, depth):
+    def __init__(self, tokens_remain, parent, last_move, depth, best_state):
         self.tokens_remain = tokens_remain
         self.parent = parent
         self.last_move = last_move
         self.depth = depth
         self.e = 0
         self.children = []
+        self.best_state = None
 
         def addNode(self, obj):
             self.children.append(obj)
@@ -44,7 +45,7 @@ class Node:
 
 
 def create_node(tokens_remain, parent_node, last_move, depth):
-    return Node(tokens_remain, parent_node, last_move, depth)
+    return Node(tokens_remain, parent_node, last_move, depth, None)
     # return Node(tokens_remain, parent_node, last_move, depth, e)
 
 
@@ -169,10 +170,10 @@ def min_max(node, depth, alpha, beta, maximizingPlayer):
 
 
 num_of_e = 0
-best_state = None
+#best_state = None
 num_nodes_visited = 0
 def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
-    global best_state
+    #global best_state
     global num_of_e
     global num_nodes_visited
 
@@ -203,12 +204,14 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
         for child in child_nodes:
             max_value = alpha_beta_search(child, depth - 1, alpha, beta, False)
             #max_value = max(max_value, eval)
+            if max_value >= alpha:
+                node.best_state = child
             alpha = max(alpha, max_value)
             # If beta is less or equal to alpha, break the loop
             if alpha >= beta:
                 break
-            else:
-                best_state = child
+            #else:
+                #node.best_state = child
                 #print("Move:", best_state.last_move)
         #print("Max =", max_value)
         return max_value
@@ -219,10 +222,12 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
             min_value = alpha_beta_search(child, depth - 1, alpha, beta, True)
             #min_value = min(min_value, eval)
             beta = min(beta, min_value)
+            if min_value <= beta:
+                node.best_state = child
             if beta <= alpha:
                 break
-            else:
-                best_state = child
+            #else:
+                #best_state = child
                 #print("Move:", best_state.last_move)
         #print("Min =", min_value)
         return min_value
@@ -466,7 +471,7 @@ if __name__ == '__main__':
     limit_depth = 4
 
     avg_factor = (num_nodes_visited - 1) / (num_nodes_visited - num_of_e)
-    print(best_state.last_move)
+    print(start3.best_state.last_move)
     print("Value:", e3)
     print("Number of Nodes Visited:", num_nodes_visited)
     print("Number of Nodes Evaluated:",num_of_e)
