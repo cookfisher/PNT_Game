@@ -12,13 +12,14 @@ BETA = inf
 
 
 class Node:
-    def __init__(self, tokens_remain, parent, last_move, depth):
+    def __init__(self, tokens_remain, parent, last_move, depth, best_state):
         self.tokens_remain = tokens_remain
         self.parent = parent
         self.last_move = last_move
         self.depth = depth
         self.e = 0
         self.children = []
+        self.children = None
 
         def addNode(self, obj):
             self.children.append(obj)
@@ -47,8 +48,8 @@ class Node:
 
 
 def create_node(tokens_remain, parent_node, last_move, depth):
-    return Node(tokens_remain, parent_node, last_move, depth)
-    # return Node(tokens_remain, parent_node, last_move, depth, e)
+    return Node(tokens_remain, parent_node, last_move, depth, None)
+    #return Node(tokens_remain, parent_node, last_move, depth)
 
 
 # all possible nodes/choices
@@ -77,12 +78,12 @@ def findChildNodes(parent_node, first_turn): # , num_of_tokens
                 child_nodes.append(child_node)
                 #child_nodes.insert(0, child_node)
 
-    print("Children of", parent_node.tokens_remain, "=", len(child_nodes))
+    print("Children of parent", parent_node.tokens_remain, "=", len(child_nodes))
     for i in range(len(child_nodes)):
         print(child_nodes[i].tokens_remain, "move =", child_nodes[i].last_move, "depth = ", child_nodes[i].depth)
 
     parent_node.children = child_nodes
-
+    #parent_node.e = evaluation(parent_node.children, parent_node.last_move)
     return child_nodes
 
 
@@ -140,7 +141,7 @@ def is_max_turn(taken_tokens):
 
 
 def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
-    global best_state
+    #global best_state
     global num_of_e
     global num_nodes_visited
 
@@ -159,7 +160,8 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
         print(node.tokens_remain, "Move:", node.last_move)
         print("e =", e)
         print()
-        best_state = node
+        #best_state = node
+        #node.e = e
         return e
 
     # The player is max
@@ -167,8 +169,9 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
         max_value = -inf
         for child in child_nodes:
             max_value = alpha_beta_search(child, depth - 1, alpha, beta, False)
-            if max_value >= alpha:
-                best_state = child
+            if max_value > alpha:
+                node.best_state = child
+                node.best_state.e = max_value
             alpha = max(alpha, max_value)
             # If beta is less or equal to alpha, break the loop
             if alpha >= beta:
@@ -182,8 +185,9 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
         min_value = inf
         for child in child_nodes:
             min_value = alpha_beta_search(child, depth - 1, alpha, beta, True)
-            if min_value <= beta:
-                best_state = child
+            if min_value < beta:
+                node.best_state = child
+                node.best_state.e = min_value
             beta = min(beta, min_value)
             if beta <= alpha:
                 break
@@ -411,9 +415,23 @@ if __name__ == '__main__':
         e = alpha_beta_search(root, depth, ALPHA, BETA, isMaxTurn)
         max_depth_reached = min(max_tree_depth, depth)
 
+    #if isMaxTurn:
+        #temp = -inf
+        #for children in root.children:
+            #if children.e > temp:
+                #move = children.last_move
+                #e = children.e
+    #else:
+        #temp = inf
+        #for children in root.children:
+            #if children.e < temp:
+                #move = children.last_move
+                #e = children.e
+
     avg_factor = (num_nodes_visited - 1) / (num_nodes_visited - num_of_e)
-    print("Move:", best_state.last_move)
-    print("Value:", e)
+    print("Move:", root.best_state.last_move)
+    print("Value algo:", e)
+    print("Value :", root.best_state.e)
     print("Number of Nodes Visited:", num_nodes_visited)
     print("Number of Nodes Evaluated:", num_of_e)
     print("Max Depth Reached:", max_depth_reached)
