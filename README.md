@@ -14,5 +14,8 @@ PNT_Player.py
 	2. Read the input values without player via function read_arg_without_player. eg. python PNT_Player.py 7 2 3 6 0  
 	3. Help function to generate unused token list based on the number of token.  
 
-Output_10_cases.txt  
+Testcase10.txt  
 	Provide ten test cases based on the requirement.  
+
+Output_10_cases.txt  
+	Return the outputs of ten test cases.  
