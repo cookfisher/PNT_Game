@@ -72,9 +72,36 @@ def read_arg_without_player():
     # return all values
     return int(num_token), int(num_taken_token), list_taken_token, int(depth)
 
+# Generate unused token list
+def generate_input_list(numToken, taken_token):
+    # invoke the range function, removing the first element 0 and add the last element.
+    total_list = list(range(numToken + 1))
+    total_list.remove(0)
+    print('total list is ',total_list)
+    non_taken_token = []
+    for item in total_list:
+        if item not in taken_token:
+            non_taken_token.append(item)
+    #print(non_taken_token)
+    return non_taken_token
+
+###########################################################
+# Read the parameters from command line interface
+# and generate unused token list
+###########################################################
 num_token, num_taken_token, taken_token, depth = read_arg()
-print(read_arg())
+#print(read_arg())
+child_list1 = generate_input_list(num_token, taken_token)
+print('input list for child nodes is : ',child_list1)
+
+###########################################################
+# Set the parameters directly and generate unused token list
+###########################################################
+child_list2 = generate_input_list(7, [3,6])
+print('input list for child nodes is : ',child_list2)
+
+###########################################################
 # 2nd method without pnt player input
+###########################################################
 #print('The second method')
 #print(read_arg_without_player())
-
