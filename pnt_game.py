@@ -49,20 +49,18 @@ def create_node(tokens_remain, parent_node, last_move, depth):
 
 
 # all possible nodes/choices
-def findChildNodes(parent_node, turns): # , num_of_tokens
+def findChildNodes(parent_node, first_turn): # , num_of_tokens
     tokens_remain = parent_node.tokens_remain
     #last_move = parent_node.last_move
     length = len(tokens_remain)
     child_nodes = []
     # At the first move
-    if turns == 1:
+    if first_turn:
         for move in tokens_remain:
             if move < length/2 and move % 2 == 1:
                 new_tokens_remain = copy.deepcopy(tokens_remain)
                 new_tokens_remain.remove(move)
                 child_node = create_node(new_tokens_remain, parent_node, move, parent_node.depth + 1)
-                #e = evaluation(turns, child_node, last_move, num_of_tokens)
-                #child_node.e = e
                 child_nodes.append(child_node)
     # At subsequent moves
     else:
@@ -72,8 +70,6 @@ def findChildNodes(parent_node, turns): # , num_of_tokens
                 new_tokens_remain = copy.deepcopy(tokens_remain)
                 new_tokens_remain.remove(move)
                 child_node = create_node(new_tokens_remain, parent_node, move, parent_node.depth + 1)
-                #e = evaluation(turns, child_node, last_move, num_of_tokens)
-                #child_node.e = e
                 child_nodes.append(child_node)
 
     print("Children of", parent_node.tokens_remain, "=", len(child_nodes))
@@ -84,17 +80,20 @@ def findChildNodes(parent_node, turns): # , num_of_tokens
     return child_nodes
 
 
+# parameter is root and children in level 1
 def build_tree(start_node, c1):
+    global max_tree_depth
     #c1 = findChildNodes(start_node,turn)
     if c1:
         for i in c1:
-            c2 = findChildNodes(i, turn+1)
+            c2 = findChildNodes(i, False)
             #if c2:
                 #i.addNodes(c2)
+        max_tree_depth += 1
         return build_tree(start_node, c2)
     else:
         print("TREE BUILT")
-        return
+        return max_tree_depth
 
 
 # return list of all multiples and factors,
@@ -169,12 +168,14 @@ def min_max(node, depth, alpha, beta, maximizingPlayer):
 num_of_e = 0
 best_state = None
 num_nodes_visited = 0
-max_depth = 0
-avg_factor = 0
 def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
     global best_state
     global num_of_e
-    child_nodes = copy.deepcopy(node.children)
+    global num_nodes_visited
+
+
+    child_nodes = node.children
+    num_nodes_visited += len(child_nodes)
     #child_nodes.reverse()
 
     #test children
@@ -184,12 +185,10 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
 
     # If depth is 0, search to end game states and return the index of player.
     if depth == 0 or len(child_nodes) == 0:
-        #print("Node", node.tokens_remain, "Node Depth", node.depth)
         e = evaluation(maximizingPlayer, node, node.last_move)
-        #best_state = node
         num_of_e += 1
         print(node.tokens_remain, "Move:", node.last_move)
-        print("e", e)
+        print("e =", e)
         print()
         return e
         #return maximizingPlayer
@@ -237,14 +236,14 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
             e = -1.0
         else:               #max's turn & game finish
             e = 1.0
-        print("Value =", e)
+        #print("Value =", e)
         return e
     # max turn
     if isMaxTurn == True: # turns % 2 == 1
         # token 1 is not taken yet
         if 1 in node.tokens_remain:
             e = 0
-            print("Value =", e)
+            #print("Value =", e)
             return e
         # last move was 1
         if last_move == 1:
@@ -253,7 +252,7 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
                 e = 0.5
             elif len(child_nodes) % 2 == 0:
                 e = -0.5
-            print("Value =", e)
+            #print("Value =", e)
             return e
         # last move is a prime
         if is_prime(last_move):
@@ -263,7 +262,7 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
                 e = 0.7
             elif prime_multiples % 2 == 0:
                 e = -0.7
-            print("Value =", e)
+            #print("Value =", e)
             return e
         #the last move is not prime
         else:
@@ -281,7 +280,7 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
                 e = 0.6
             elif prime_multiples % 2 == 0:
                 e = -0.6
-            print("Value =", e)
+            #print("Value =", e)
             return e
     # min turn
     if isMaxTurn == False:
@@ -296,7 +295,7 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
                 e = -0.5
             elif len(child_nodes) % 2 == 0:
                 e = 0.5
-            print("Value =", e)
+            #print("Value =", e)
             return e
         # last move is a prime
         if is_prime(last_move):
@@ -306,7 +305,7 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
                 e = -0.7
             elif prime_multiples % 2 == 0:
                 e = 0.7
-            print("Value =", e)
+            #print("Value =", e)
             return e
         # the last move is not prime
         else:
@@ -324,7 +323,7 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
                 e = -0.6
             elif prime_multiples % 2 == 0:
                 e = 0.6
-            print("Value =", e)
+            #print("Value =", e)
             return e
 
 
@@ -395,7 +394,7 @@ test_list = generate_list(7)
 test_list2 = [2, 3, 4, 7, 8, 10]
 
 
-input4 = [3, 5, 6, 7]
+
 
 is_prime(31)
 maxPrimeFactors(25)
@@ -418,27 +417,54 @@ print()
 
 # PNT
 if __name__ == '__main__':
-    input2 = [2, 3, 4, 5, 6, 7]
-    input3 = [1, 3, 5, 7, 8, 9, 10]
-    turn = 2
-    start2 = create_node(input2, None, 1, 0)
-    #start3 = create_node(input3, None, 6, 0)
-    #start4 = create_node(input4, None, 2, 0)
-    c2 = findChildNodes(start2, turn)
-    #c3 = findChildNodes(start3, turn)
-    #c4 = findChildNodes(start4, turn)
-    build_tree(start2, c2)
-    #child1 = start2.children[0]
-    #child2 = child1.children[0]
-    #print(child2.tokens_remain)
-    print()
-    isMaxTurn = is_max_turn([1])
-    #isMaxTurn = is_max_turn([2,4,6])
-    #isMaxTurn = is_max_turn([1, 2, 4])
-    e1 = alpha_beta_search(start2, 2, ALPHA, BETA, isMaxTurn)
-    #e2 = alpha_beta_search(start3, 4, ALPHA, BETA, isMaxTurn)
-    #alpha_beta_search(start4, 3, ALPHA, BETA, isMaxTurn)
+# global variable
+    # tree depth
+    max_tree_depth = 0
 
-    print(e1)
-    print(num_of_e)
+    #input1 = [1, 2, 3]
+    #input2 = [2, 3, 4, 5, 6, 7]
+    input3 = [1, 3, 5, 7, 8, 9, 10]
+    #input4 = [3, 5, 6, 7]
+
+    total = 10
+    if len(input3) == total:
+        turn = True
+    else:
+        turn = False
+
+    #start1 = create_node(input1, None, 0, 0)
+    #start2 = create_node(input2, None, 1, 0)
+    start3 = create_node(input3, None, 6, 0)
+    #start4 = create_node(input4, None, 2, 0)
+
+# find the children node in depth = 1
+    #c1 = findChildNodes(start1, turn)
+    #c2 = findChildNodes(start2, turn)
+    c3 = findChildNodes(start3, True)
+    #c4 = findChildNodes(start4, turn)
+    if len(c3) > 0:
+        max_tree_depth += 1
+
+    #depth = build_tree(start1, c1)
+    #depth = build_tree(start2, c2)
+    depth = build_tree(start3, c3)
+    print()
+
+    #isMaxTurn = is_max_turn([])
+    #isMaxTurn = is_max_turn([1])
+    isMaxTurn = is_max_turn([2,4,6])
+    #isMaxTurn = is_max_turn([1, 2, 4])
+
+    #e2 = alpha_beta_search(start2, 2, ALPHA, BETA, isMaxTurn)
+    e3 = alpha_beta_search(start3, 4, ALPHA, BETA, isMaxTurn)
+    #e4 = alpha_beta_search(start4, 3, ALPHA, BETA, isMaxTurn)
+
+    limit_depth = 4
+
+    avg_factor = (num_nodes_visited - 1) / (num_nodes_visited - num_of_e)
     print(best_state.last_move)
+    print("Value:", e3)
+    print("Number of Nodes Visited:", num_nodes_visited)
+    print("Number of Nodes Evaluated:",num_of_e)
+    print("Max Depth Reached:", min(max_tree_depth,limit_depth))
+    print("Avg Effective Branching Factor:", avg_factor)
