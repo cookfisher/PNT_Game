@@ -82,6 +82,7 @@ def findChildNodes(parent_node, first_turn): # , num_of_tokens
         print(child_nodes[i].tokens_remain, "move =", child_nodes[i].last_move, "depth = ", child_nodes[i].depth)
 
     parent_node.children = child_nodes
+
     return child_nodes
 
 
@@ -131,7 +132,7 @@ def generate_list(number):
 
 
 def is_max_turn(taken_tokens):
-    # taken_tokens is list
+    # test next turn
     if len(taken_tokens) % 2 == 0:
         return True
     else:
@@ -199,9 +200,9 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
     child_nodes = node.children
     if len(node.tokens_remain) == 0 or len(child_nodes) == 0:
         #Player A (MAX) wins: 1.0, Player B (MIN) wins: -1.0
-        if isMaxTurn:   #min's turn & game finish /turns % 2 == 0
+        if isMaxTurn:   # max turn & game finish /turns % 2 == 0
             e = -1.0
-        else:               #max's turn & game finish
+        else:           # min turn & game finish
             e = 1.0
         #print("Value =", e)
         return e
@@ -343,26 +344,11 @@ def maxPrimeFactors (n):
 
 # ----------Driver Code----------
 #test
-test_list2 = [4, 5, 6, 7, 8]
+#test_list2 = [4, 5, 6, 7, 8]
 
-is_prime(31)
-maxPrimeFactors(25)
-find_multiples_or_factors(2,test_list2)
-
-#start_node = create_node(test_list, None, 0, 0)
-#second_node = create_node([3,6,7,9,12], start_node, 1, 1)
-#third_node = create_node([3,4,5,7], start_node, 1, 1)
-
-# test find_prime_multiples
-#nodes = [second_node, third_node]
-#find_prime_multiples(3, nodes, True)
-#find_prime_multiples(3, nodes, False)
-#print()
-
-# e(n)
-#test_node = create_node(test_list2, None, 0, 0)
-#test_node.children = nodes
-#evaluation(3, test_node, 5)
+#is_prime(31)
+#maxPrimeFactors(25)
+#find_multiples_or_factors(2,test_list2)
 
 # PNT
 if __name__ == '__main__':
@@ -397,10 +383,10 @@ if __name__ == '__main__':
     else:
         last_token = taken_token[-1]
 
-    print('input list for child nodes is : ', user_input)
-    print("last_token", last_token)
-    print("taken_token", taken_token)
-    print(depth)
+    #print('input list for child nodes is : ', user_input)
+    #print("last_token", last_token)
+    #print("taken_token", taken_token)
+    #print(depth)
 
     if len(user_input) == num_token:
         first_turn = True
@@ -415,6 +401,7 @@ if __name__ == '__main__':
     print("max_tree_depth =", max_tree_depth)
     print()
     isMaxTurn = is_max_turn(taken_token)
+    print("isMaxTurn", isMaxTurn)
 
     # If depth is 0, search to end game states (the whole tree)
     if depth == 0:
