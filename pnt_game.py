@@ -1,5 +1,6 @@
 import copy
 import math
+import time
 
 import PNT_Player
 #from PNT_Player import read_arg, generate_input_list
@@ -78,9 +79,9 @@ def findChildNodes(parent_node, first_turn): # , num_of_tokens
                 child_nodes.append(child_node)
                 #child_nodes.insert(0, child_node)
 
-    print("Children of parent", parent_node.tokens_remain, "=", len(child_nodes))
-    for i in range(len(child_nodes)):
-        print(child_nodes[i].tokens_remain, "move =", child_nodes[i].last_move, "depth = ", child_nodes[i].depth)
+    #print("Children of parent", parent_node.tokens_remain, "=", len(child_nodes))
+    #for i in range(len(child_nodes)):
+        #print(child_nodes[i].tokens_remain, "move =", child_nodes[i].last_move, "depth = ", child_nodes[i].depth)
 
     parent_node.children = child_nodes
     #parent_node.e = evaluation(parent_node.children, parent_node.last_move)
@@ -120,7 +121,7 @@ def find_multiples_or_factors(num, tokens_remain):
             factors_multiples.append(n)
             multiplier += 1
             n = num
-    print(num, "'s all factors and multiples (include taken token) in", tokens_remain, ": ", factors_multiples)
+    #print(num, "'s all factors and multiples (include taken token) in", tokens_remain, ": ", factors_multiples)
     return factors_multiples
 
 
@@ -148,20 +149,13 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
     child_nodes = node.children
     num_nodes_visited += len(child_nodes)
 
-    #test children
-    #for node in child_nodes:
-        #print(node.tokens_remain)
-    #print("alpha_beta_search depth =", depth)
-
     # If depth is 0, search to end game states and return the index of player.
     if depth == 0 or len(child_nodes) == 0:
         e = evaluation(maximizingPlayer, node, node.last_move)
         num_of_e += 1
-        print(node.tokens_remain, "Move:", node.last_move)
-        print("e =", e)
-        print()
-        #best_state = node
-        #node.e = e
+        #print(node.tokens_remain, "Move:", node.last_move)
+        #print("e =", e)
+        #print()
         return e
 
     # The player is max
@@ -288,20 +282,20 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
 
 def is_prime(n):
     if n < 2:
-        print("Is prime = ", False)
+        #print("Is prime = ", False)
         return False
     else:
         if n % 2 == 0 or n % 3 == 0:
-            print("Is prime = ", False)
+            #print("Is prime = ", False)
             return False
         # all primes are of the form 6k ± 1
         i = 5
         while i * i <= n:
             if n % i == 0 or n % (i + 2) == 0:
-                print("Is prime = ", False)
+                #print("Is prime = ", False)
                 return False
             i = i + 6
-        print(n, "is prime =", True)
+        #print(n, "is prime =", True)
         return True
 
 
@@ -325,7 +319,7 @@ def find_prime_multiples(num, child_nodes, is_prime):
                 list_multiples.append(n)
                 num_of_multiples += 1
             multiplier += 1
-    print("Find prime multiples in all children =", num_of_multiples, ":",list_multiples)
+    #print("Find prime multiples in all children =", num_of_multiples, ":",list_multiples)
     return num_of_multiples
 
 
@@ -342,18 +336,11 @@ def maxPrimeFactors (n):
             n = n / i
     if n > 2:
         max_prime = n
-    print("max_prime_factor:", max_prime)
+    #print("max_prime_factor:", max_prime)
     return int(max_prime)
 
 
 # ----------Driver Code----------
-#test
-#test_list2 = [4, 5, 6, 7, 8]
-
-#is_prime(31)
-#maxPrimeFactors(25)
-#find_multiples_or_factors(2,test_list2)
-
 # PNT
 if __name__ == '__main__':
     # ----------------global variable-------------
@@ -366,7 +353,7 @@ if __name__ == '__main__':
     # tree depth
     max_tree_depth = 0
 
-    # ----------------------------------------------test case-----------------------------------------------
+    # ----------------------test case------------------------
     #1 python pnt_game.py PNT_Player 3 0 0
     #2 python pnt_game.py PNT_Player 7 1 1 2
     #3 python pnt_game.py PNT_Player 10 3 4 2 6 4
@@ -378,7 +365,7 @@ if __name__ == '__main__':
     #8 python pnt_game.py PNT_Player 10 3 1 3 6 4
     #9 python pnt_game.py PNT_Player 10 1 3 4
     #0 python pnt_game.py PNT_Player 10 3 3 6 2 4
-    # ----------------------------------------------test case-----------------------------------------------
+    # ----------------------test case------------------------
     num_token, num_taken_token, taken_token, depth = PNT_Player.read_arg()
     user_input = PNT_Player.generate_input_list(num_token, taken_token)
 
@@ -400,12 +387,13 @@ if __name__ == '__main__':
     # root
     root = create_node(user_input, None, last_token, 0)
     nodes_depth1 = findChildNodes(root, first_turn)
-    print(len(nodes_depth1))
     max_tree_depth = build_tree(root, nodes_depth1)
-    print("max_tree_depth =", max_tree_depth)
+    #print("max_tree_depth =", max_tree_depth)
     print()
     isMaxTurn = is_max_turn(taken_token)
-    print("isMaxTurn", isMaxTurn)
+    #print("isMaxTurn", isMaxTurn)
+
+    start_time = time.time()
 
     # If depth is 0, search to end game states (the whole tree)
     if depth == 0:
@@ -415,24 +403,15 @@ if __name__ == '__main__':
         e = alpha_beta_search(root, depth, ALPHA, BETA, isMaxTurn)
         max_depth_reached = min(max_tree_depth, depth)
 
-    #if isMaxTurn:
-        #temp = -inf
-        #for children in root.children:
-            #if children.e > temp:
-                #move = children.last_move
-                #e = children.e
-    #else:
-        #temp = inf
-        #for children in root.children:
-            #if children.e < temp:
-                #move = children.last_move
-                #e = children.e
+    elapsed_time = time.time() - start_time
 
     avg_factor = (num_nodes_visited - 1) / (num_nodes_visited - num_of_e)
     print("Move:", root.best_state.last_move)
-    print("Value algo:", e)
-    print("Value :", root.best_state.e)
+    #print("Value algo:", e)
+    print("Value:", root.best_state.e)
     print("Number of Nodes Visited:", num_nodes_visited)
     print("Number of Nodes Evaluated:", num_of_e)
     print("Max Depth Reached:", max_depth_reached)
     print("Avg Effective Branching Factor:", round(avg_factor, 1))
+    print()
+    print('Time used:', elapsed_time)
