@@ -65,6 +65,7 @@ def findChildNodes(parent_node, first_turn): # , num_of_tokens
                 new_tokens_remain.remove(move)
                 child_node = create_node(new_tokens_remain, parent_node, move, parent_node.depth + 1)
                 child_nodes.append(child_node)
+                #child_nodes.insert(0, child_node)
     # At subsequent moves
     else:
         possible_moves = find_multiples_or_factors(parent_node.last_move, parent_node.tokens_remain)
@@ -74,6 +75,7 @@ def findChildNodes(parent_node, first_turn): # , num_of_tokens
                 new_tokens_remain.remove(move)
                 child_node = create_node(new_tokens_remain, parent_node, move, parent_node.depth + 1)
                 child_nodes.append(child_node)
+                #child_nodes.insert(0, child_node)
 
     print("Children of", parent_node.tokens_remain, "=", len(child_nodes))
     for i in range(len(child_nodes)):
@@ -87,15 +89,11 @@ def findChildNodes(parent_node, first_turn): # , num_of_tokens
 def build_tree(start_node, c1):
     global max_tree_depth
     c_Total = []
-    #c1 = findChildNodes(start_node,turn)
-    if len(c1) > 0:
+    if c1:
         for i in c1:
             c2 = findChildNodes(i, False)
             c_Total.extend(c2)
-            #if c2:
-                #i.addNodes(c2)
         max_tree_depth += 1
-        #return build_tree(start_node, c2)
         return build_tree(start_node, c_Total)
     else:
         #print("TREE BUILT")
@@ -140,37 +138,6 @@ def is_max_turn(taken_tokens):
         return False
 
 
-# ---------------------------------back up-------------------------------------------
-def min_max(node, depth, alpha, beta, maximizingPlayer):
-    child_nodes = node.children
-    # If depth is 0, search to end game states and return the index of player.
-    if depth == 0 or len(child_nodes) == 0:
-        return maximizingPlayer
-
-    # The player is max
-    if maximizingPlayer:
-        max_value = -inf
-        for child in child_nodes:
-            eval = min_max(child, depth - 1, alpha, beta, False)
-            max_value = max(max_value, eval)
-            alpha = max(alpha, eval)
-            # If beta is less or equal to alpha, break the loop
-            if beta <= alpha:
-                break
-        return max_value
-            # recursive for the children
-    else:
-        min_value = inf
-        for child in child_nodes:
-            eval = min_max(child, depth - 1, alpha, beta, True)
-            min_value = min(min_value, eval)
-            beta = min(beta, eval)
-            if beta <= alpha:
-                break
-        return min_value
-
-
-
 def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
     global best_state
     global num_of_e
@@ -191,9 +158,7 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
         print(node.tokens_remain, "Move:", node.last_move)
         print("e =", e)
         print()
-
         best_state = node
-
         return e
 
     # The player is max
@@ -271,13 +236,6 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
             largest_prime = maxPrimeFactors(last_move)
             prime_multiples = find_prime_multiples(largest_prime, child_nodes, False)
 
-            #count = 0
-            #multiplier = 1
-            #while largest_prime < num_of_tokens:
-                #count += 1
-                #multiplier += 1
-                #largest_prime *= multiplier
-
             if prime_multiples % 2 == 1:
                 e = 0.6
             elif prime_multiples % 2 == 0:
@@ -313,13 +271,6 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
         else:
             largest_prime = maxPrimeFactors(last_move)
             prime_multiples = find_prime_multiples(largest_prime, child_nodes, False)
-
-            # count = 0
-            # multiplier = 1
-            # while largest_prime < num_of_tokens:
-            # count += 1
-            # multiplier += 1
-            # largest_prime *= multiplier
 
             if prime_multiples % 2 == 1:
                 e = -0.6
@@ -392,11 +343,11 @@ def maxPrimeFactors (n):
 
 # ----------Driver Code----------
 #test
-test_list2 = [2, 3, 4, 7, 8, 10]
+test_list2 = [4, 5, 6, 7, 8]
 
 is_prime(31)
 maxPrimeFactors(25)
-find_multiples_or_factors(4,test_list2)
+find_multiples_or_factors(2,test_list2)
 
 #start_node = create_node(test_list, None, 0, 0)
 #second_node = create_node([3,6,7,9,12], start_node, 1, 1)
@@ -430,9 +381,9 @@ if __name__ == '__main__':
     #2 python pnt_game.py PNT_Player 7 1 1 2
     #3 python pnt_game.py PNT_Player 10 3 4 2 6 4
     #4 python pnt_game.py PNT_Player 7 3 1 4 2 3
+    #5 python pnt_game.py PNT_Player 8 3 3 1 2 0
+    #6 python pnt_game.py PNT_Player 10 5 3 1 8 4 2 0
 
-    #5 python pnt_game.py PNT_Player 7 1 1 3
-    #6 python pnt_game.py PNT_Player 7 2 1 3 2
     #7 python pnt_game.py PNT_Player 7 2 3 6 3
     #8 python pnt_game.py PNT_Player 10 3 1 3 6 4
     #9 python pnt_game.py PNT_Player 10 1 3 4
@@ -441,14 +392,15 @@ if __name__ == '__main__':
     num_token, num_taken_token, taken_token, depth = PNT_Player.read_arg()
     user_input = PNT_Player.generate_input_list(num_token, taken_token)
 
-    if depth == 0:
+    if len(taken_token) == 0:
         last_token = 0
     else:
         last_token = taken_token[-1]
 
-    #print('input list for child nodes is : ', user_input)
-    #print("last_token", last_token)
-    #print()
+    print('input list for child nodes is : ', user_input)
+    print("last_token", last_token)
+    print("taken_token", taken_token)
+    print(depth)
 
     if len(user_input) == num_token:
         first_turn = True
@@ -458,6 +410,7 @@ if __name__ == '__main__':
     # root
     root = create_node(user_input, None, last_token, 0)
     nodes_depth1 = findChildNodes(root, first_turn)
+    print(len(nodes_depth1))
     max_tree_depth = build_tree(root, nodes_depth1)
     print("max_tree_depth =", max_tree_depth)
     print()
@@ -477,53 +430,4 @@ if __name__ == '__main__':
     print("Number of Nodes Visited:", num_nodes_visited)
     print("Number of Nodes Evaluated:", num_of_e)
     print("Max Depth Reached:", max_depth_reached)
-    print("Avg Effective Branching Factor:", avg_factor)
-
-    #input1 = [1, 2, 3]
-    #input2 = [2, 3, 4, 5, 6, 7]
-    #input3 = [1, 3, 5, 7, 8, 9, 10]
-    #input4 = [3, 5, 6, 7]
-
-    #total = 7
-    #if len(input4) == total:
-        #turn = True
-    #else:
-        #turn = False
-
-    #start1 = create_node(input1, None, 0, 0)
-    #start2 = create_node(input2, None, 1, 0)
-    #start3 = create_node(input3, None, 6, 0)
-    #start4 = create_node(input4, None, 2, 0)
-
-# find the children node in depth = 1
-    #c1 = findChildNodes(start1, turn)
-    #c2 = findChildNodes(start2, turn)
-    #c3 = findChildNodes(start3, turn)
-    #c4 = findChildNodes(start4, turn)
-    #if len(c4) > 0:
-        #max_tree_depth += 1
-
-    #depth = build_tree(start1, c1)
-    #depth = build_tree(start2, c2)
-    #depth = build_tree(start3, c3)
-    #max_tree_depth = build_tree(start4, c4)
-    #print(max_tree_depth)
-
-    #isMaxTurn = is_max_turn([])
-    #isMaxTurn = is_max_turn([1])
-    #isMaxTurn = is_max_turn([2,4,6])
-    #isMaxTurn = is_max_turn([1, 2, 4])
-
-    #e2 = alpha_beta_search(start2, 2, ALPHA, BETA, isMaxTurn)
-    #e3 = alpha_beta_search(start3, 4, ALPHA, BETA, isMaxTurn)
-    #e4 = alpha_beta_search(start4, 3, ALPHA, BETA, isMaxTurn)
-
-    #limit_depth = 3
-
-    #avg_factor = (num_nodes_visited - 1) / (num_nodes_visited - num_of_e)
-    #print("Move:", best_state.last_move)
-    #print("Value:", e)
-    #print("Number of Nodes Visited:", num_nodes_visited)
-    #print("Number of Nodes Evaluated:", num_of_e)
-    #print("Max Depth Reached:", min(max_tree_depth, limit_depth))
-    #print("Avg Effective Branching Factor:", avg_factor)
+    print("Avg Effective Branching Factor:", round(avg_factor, 1))
