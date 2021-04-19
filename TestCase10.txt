@@ -1,0 +1,10 @@
+#1 python pnt_game.py PNT_Player 3 0 0
+#2 python pnt_game.py PNT_Player 7 1 1 2
+#3 python pnt_game.py PNT_Player 10 3 4 2 6 4
+#4 python pnt_game.py PNT_Player 7 3 1 4 2 3
+#5 python pnt_game.py PNT_Player 8 3 3 1 2 0
+#6 python pnt_game.py PNT_Player 10 5 3 1 8 4 2 0
+#7 python pnt_game.py PNT_Player 7 2 3 6 3
+#8 python pnt_game.py PNT_Player 10 3 1 3 6 4
+#9 python pnt_game.py PNT_Player 10 1 3 4
+#0 python pnt_game.py PNT_Player 10 3 3 6 2 4
