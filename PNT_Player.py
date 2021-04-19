@@ -89,8 +89,12 @@ def generate_input_list(numToken, taken_token):
 # Read the parameters from command line interface
 # and generate unused token list
 ###########################################################
-num_token, num_taken_token, taken_token, depth = read_arg()
+#num_token, num_taken_token, taken_token, depth = read_arg()
 #print(read_arg())
+
+num_token, num_taken_token, taken_token, depth = read_arg_without_player()
+print(read_arg_without_player())
+
 child_list1 = generate_input_list(num_token, taken_token)
 print('input list for child nodes is : ',child_list1)
 
