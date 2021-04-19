@@ -83,14 +83,17 @@ def findChildNodes(parent_node, first_turn): # , num_of_tokens
 # parameter is root and children in level 1
 def build_tree(start_node, c1):
     global max_tree_depth
+    cTotal = []
     #c1 = findChildNodes(start_node,turn)
     if c1:
         for i in c1:
             c2 = findChildNodes(i, False)
+            cTotal+=c2
             #if c2:
                 #i.addNodes(c2)
         max_tree_depth += 1
-        return build_tree(start_node, c2)
+        #return build_tree(start_node, c2)
+        return build_tree(start_node, cTotal)
     else:
         print("TREE BUILT")
         return max_tree_depth
@@ -422,48 +425,48 @@ if __name__ == '__main__':
     max_tree_depth = 0
 
     #input1 = [1, 2, 3]
-    #input2 = [2, 3, 4, 5, 6, 7]
-    input3 = [1, 3, 5, 7, 8, 9, 10]
+    input2 = [2, 3, 4, 5, 6, 7]
+    #input3 = [1, 3, 5, 7, 8, 9, 10]
     #input4 = [3, 5, 6, 7]
 
     total = 10
-    if len(input3) == total:
+    if len(input2) == total:
         turn = True
     else:
         turn = False
 
     #start1 = create_node(input1, None, 0, 0)
-    #start2 = create_node(input2, None, 1, 0)
-    start3 = create_node(input3, None, 6, 0)
+    start2 = create_node(input2, None, 1, 0)
+    #start3 = create_node(input3, None, 6, 0)
     #start4 = create_node(input4, None, 2, 0)
 
 # find the children node in depth = 1
     #c1 = findChildNodes(start1, turn)
-    #c2 = findChildNodes(start2, turn)
-    c3 = findChildNodes(start3, True)
+    c2 = findChildNodes(start2, turn)
+    #c3 = findChildNodes(start3, True)
     #c4 = findChildNodes(start4, turn)
-    if len(c3) > 0:
+    if len(c2) > 0:
         max_tree_depth += 1
 
     #depth = build_tree(start1, c1)
-    #depth = build_tree(start2, c2)
-    depth = build_tree(start3, c3)
+    depth = build_tree(start2, c2)
+    #depth = build_tree(start3, c3)
     print()
 
     #isMaxTurn = is_max_turn([])
-    #isMaxTurn = is_max_turn([1])
-    isMaxTurn = is_max_turn([2,4,6])
+    isMaxTurn = is_max_turn([1])
+    #isMaxTurn = is_max_turn([2,4,6])
     #isMaxTurn = is_max_turn([1, 2, 4])
 
-    #e2 = alpha_beta_search(start2, 2, ALPHA, BETA, isMaxTurn)
-    e3 = alpha_beta_search(start3, 4, ALPHA, BETA, isMaxTurn)
+    e2 = alpha_beta_search(start2, 2, ALPHA, BETA, isMaxTurn)
+    #e3 = alpha_beta_search(start3, 4, ALPHA, BETA, isMaxTurn)
     #e4 = alpha_beta_search(start4, 3, ALPHA, BETA, isMaxTurn)
 
-    limit_depth = 4
+    limit_depth = 2
 
     avg_factor = (num_nodes_visited - 1) / (num_nodes_visited - num_of_e)
     print(best_state.last_move)
-    print("Value:", e3)
+    print("Value:", e2)
     print("Number of Nodes Visited:", num_nodes_visited)
     print("Number of Nodes Evaluated:",num_of_e)
     print("Max Depth Reached:", min(max_tree_depth,limit_depth))
