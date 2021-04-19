@@ -86,14 +86,17 @@ def findChildNodes(parent_node, first_turn): # , num_of_tokens
 # parameter is root and children in level 1
 def build_tree(start_node, c1):
     global max_tree_depth
+    c_Total = []
     #c1 = findChildNodes(start_node,turn)
     if len(c1) > 0:
         for i in c1:
             c2 = findChildNodes(i, False)
+            c_Total.extend(c2)
             #if c2:
                 #i.addNodes(c2)
         max_tree_depth += 1
-        return build_tree(start_node, c2)
+        #return build_tree(start_node, c2)
+        return build_tree(start_node, c_Total)
     else:
         #print("TREE BUILT")
         return max_tree_depth
@@ -360,12 +363,12 @@ def find_prime_multiples(num, child_nodes, is_prime):
             multiplier = 1
 
         while n < max(copy_tokens_remain):
+            n = num
             n *= multiplier
             if n <= max(copy_tokens_remain) and n in copy_tokens_remain:
                 list_multiples.append(n)
                 num_of_multiples += 1
-                multiplier += 1
-                n = num
+            multiplier += 1
     print("Find prime multiples in all children =", num_of_multiples, ":",list_multiples)
     return num_of_multiples
 
@@ -422,10 +425,19 @@ if __name__ == '__main__':
     # tree depth
     max_tree_depth = 0
 
-    # python pnt_game.py PNT_Player 3 0 0
-    # python pnt_game.py PNT_Player 7 1 1 2
-    # python pnt_game.py PNT_Player 10 3 4 2 6 4
-    # python pnt_game.py PNT_Player 7 3 1 4 2 3
+    # ----------------------------------------------test case-----------------------------------------------
+    #1 python pnt_game.py PNT_Player 3 0 0
+    #2 python pnt_game.py PNT_Player 7 1 1 2
+    #3 python pnt_game.py PNT_Player 10 3 4 2 6 4
+    #4 python pnt_game.py PNT_Player 7 3 1 4 2 3
+
+    #5 python pnt_game.py PNT_Player 7 1 1 3
+    #6 python pnt_game.py PNT_Player 7 2 1 3 2
+    #7 python pnt_game.py PNT_Player 7 2 3 6 3
+    #8 python pnt_game.py PNT_Player 10 3 1 3 6 4
+    #9 python pnt_game.py PNT_Player 10 1 3 4
+    #0 python pnt_game.py PNT_Player 10 3 3 6 2 4
+    # ----------------------------------------------test case-----------------------------------------------
     num_token, num_taken_token, taken_token, depth = PNT_Player.read_arg()
     user_input = PNT_Player.generate_input_list(num_token, taken_token)
 
