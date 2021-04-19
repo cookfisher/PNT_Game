@@ -166,27 +166,38 @@ def min_max(node, depth, alpha, beta, maximizingPlayer):
 
 
 
+num_of_e = 0
+best_state = None
+num_nodes_visited = 0
+max_depth = 0
+avg_factor = 0
 def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
-    best_state = None
-    child_nodes = node.children
+    global best_state
+    global num_of_e
+    child_nodes = copy.deepcopy(node.children)
+    #child_nodes.reverse()
 
     #test children
-    for node in child_nodes:
-        print(node.tokens_remain)
-    print("alpha_beta_search depth =", depth)
+    #for node in child_nodes:
+        #print(node.tokens_remain)
+    #print("alpha_beta_search depth =", depth)
 
     # If depth is 0, search to end game states and return the index of player.
     if depth == 0 or len(child_nodes) == 0:
         #print("Node", node.tokens_remain, "Node Depth", node.depth)
         e = evaluation(maximizingPlayer, node, node.last_move)
         #best_state = node
-        print("Move:", node.last_move)
+        num_of_e += 1
+        print(node.tokens_remain, "Move:", node.last_move)
+        print("e", e)
+        print()
         return e
         #return maximizingPlayer
 
     # The player is max
     if maximizingPlayer:
         max_value = -inf
+        #for child in child_nodes:
         for child in child_nodes:
             max_value = alpha_beta_search(child, depth - 1, alpha, beta, False)
             #max_value = max(max_value, eval)
@@ -194,10 +205,10 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
             # If beta is less or equal to alpha, break the loop
             if alpha >= beta:
                 break
-            #else:
-                #best_state = child
+            else:
+                best_state = child
                 #print("Move:", best_state.last_move)
-        print("Max =", max_value)
+        #print("Max =", max_value)
         return max_value
             # recursive for the children
     else:
@@ -208,10 +219,10 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
             beta = min(beta, min_value)
             if beta <= alpha:
                 break
-            #else:
-                #best_state = child
+            else:
+                best_state = child
                 #print("Move:", best_state.last_move)
-        print("Min =", min_value)
+        #print("Min =", min_value)
         return min_value
 
 
@@ -222,10 +233,10 @@ def evaluation(isMaxTurn, node, last_move): # , num_of_tokens, turns
     child_nodes = node.children
     if len(node.tokens_remain) == 0 or len(child_nodes) == 0:
         #Player A (MAX) wins: 1.0, Player B (MIN) wins: -1.0
-        if isMaxTurn == False:   #min's turn & game finish /turns % 2 == 0
-            e = 1.0
-        else:               #max's turn & game finish
+        if isMaxTurn:   #min's turn & game finish /turns % 2 == 0
             e = -1.0
+        else:               #max's turn & game finish
+            e = 1.0
         print("Value =", e)
         return e
     # max turn
@@ -382,8 +393,9 @@ def maxPrimeFactors (n):
 #test
 test_list = generate_list(7)
 test_list2 = [2, 3, 4, 7, 8, 10]
-input2 = [2, 3, 4, 5, 6, 7]
-input3 = [1, 3, 5, 7, 8, 9, 10]
+
+
+input4 = [3, 5, 6, 7]
 
 is_prime(31)
 maxPrimeFactors(25)
@@ -405,15 +417,28 @@ print()
 #evaluation(3, test_node, 5)
 
 # PNT
-turn = 2
-start1 = create_node(input2, None, 1, 0)
-start2 = create_node(input3, None, 6, 0)
-c1 = findChildNodes(start1, turn)
-build_tree(start1, c1)
-#child1 = start.children[1]
-#child2 = child1.children[1]
-#print(child2.tokens_remain)
-print()
-isMaxTurn = is_max_turn([1])
-alpha_beta_search(start1, 2, ALPHA, BETA, isMaxTurn)
-#alpha_beta_search(start2, 4, ALPHA, BETA, True)
+if __name__ == '__main__':
+    input2 = [2, 3, 4, 5, 6, 7]
+    input3 = [1, 3, 5, 7, 8, 9, 10]
+    turn = 2
+    start2 = create_node(input2, None, 1, 0)
+    #start3 = create_node(input3, None, 6, 0)
+    #start4 = create_node(input4, None, 2, 0)
+    c2 = findChildNodes(start2, turn)
+    #c3 = findChildNodes(start3, turn)
+    #c4 = findChildNodes(start4, turn)
+    build_tree(start2, c2)
+    #child1 = start2.children[0]
+    #child2 = child1.children[0]
+    #print(child2.tokens_remain)
+    print()
+    isMaxTurn = is_max_turn([1])
+    #isMaxTurn = is_max_turn([2,4,6])
+    #isMaxTurn = is_max_turn([1, 2, 4])
+    e1 = alpha_beta_search(start2, 2, ALPHA, BETA, isMaxTurn)
+    #e2 = alpha_beta_search(start3, 4, ALPHA, BETA, isMaxTurn)
+    #alpha_beta_search(start4, 3, ALPHA, BETA, isMaxTurn)
+
+    print(e1)
+    print(num_of_e)
+    print(best_state.last_move)
