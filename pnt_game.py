@@ -1,5 +1,6 @@
 import copy
 import math
+import time
 
 import PNT_Player
 #from PNT_Player import read_arg, generate_input_list
@@ -12,13 +13,14 @@ BETA = inf
 
 
 class Node:
-    def __init__(self, tokens_remain, parent, last_move, depth):
+    def __init__(self, tokens_remain, parent, last_move, depth, best_state):
         self.tokens_remain = tokens_remain
         self.parent = parent
         self.last_move = last_move
         self.depth = depth
         self.e = 0
         self.children = []
+        self.best_state = None
 
         def addNode(self, obj):
             self.children.append(obj)
@@ -47,7 +49,7 @@ class Node:
 
 
 def create_node(tokens_remain, parent_node, last_move, depth):
-    return Node(tokens_remain, parent_node, last_move, depth)
+    return Node(tokens_remain, parent_node, last_move, depth, None)
     # return Node(tokens_remain, parent_node, last_move, depth, e)
 
 
@@ -139,7 +141,7 @@ def is_max_turn(taken_tokens):
 
 
 def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
-    global best_state
+    # global best_state
     global num_of_e
     global num_nodes_visited
 
@@ -158,7 +160,7 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
         print(node.tokens_remain, "Move:", node.last_move)
         print("e =", e)
         print()
-        best_state = node
+        best_state = node.best_state
         return e
 
     # The player is max
@@ -166,8 +168,11 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
         max_value = -inf
         for child in child_nodes:
             max_value = alpha_beta_search(child, depth - 1, alpha, beta, False)
-            if max_value >= alpha:
-                best_state = child
+            # if max_value >= alpha:
+            if max_value > alpha:
+                # best_state = child
+                node.best_state = child
+                node.best_state.e = max_value
             alpha = max(alpha, max_value)
             # If beta is less or equal to alpha, break the loop
             if alpha >= beta:
@@ -181,8 +186,11 @@ def alpha_beta_search(node, depth, alpha, beta, maximizingPlayer):
         min_value = inf
         for child in child_nodes:
             min_value = alpha_beta_search(child, depth - 1, alpha, beta, True)
-            if min_value <= beta:
-                best_state = child
+            # if min_value <= beta:
+            if min_value < beta:
+                # best_state = child
+                node.best_state = child
+                node.best_state.e = min_value
             beta = min(beta, min_value)
             if beta <= alpha:
                 break
@@ -343,11 +351,11 @@ def maxPrimeFactors (n):
 
 # ----------Driver Code----------
 #test
-test_list2 = [4, 5, 6, 7, 8]
+# test_list2 = [4, 5, 6, 7, 8]
 
-is_prime(31)
-maxPrimeFactors(25)
-find_multiples_or_factors(2,test_list2)
+# is_prime(31)
+# maxPrimeFactors(25)
+# find_multiples_or_factors(2,test_list2)
 
 #start_node = create_node(test_list, None, 0, 0)
 #second_node = create_node([3,6,7,9,12], start_node, 1, 1)
@@ -416,6 +424,8 @@ if __name__ == '__main__':
     print()
     isMaxTurn = is_max_turn(taken_token)
 
+    start_time = time.time()
+
     # If depth is 0, search to end game states (the whole tree)
     if depth == 0:
         e = alpha_beta_search(root, max_tree_depth, ALPHA, BETA, isMaxTurn)
@@ -424,10 +434,15 @@ if __name__ == '__main__':
         e = alpha_beta_search(root, depth, ALPHA, BETA, isMaxTurn)
         max_depth_reached = min(max_tree_depth, depth)
 
+    elapsed_time = time.time() - start_time
+
     avg_factor = (num_nodes_visited - 1) / (num_nodes_visited - num_of_e)
-    print("Move:", best_state.last_move)
-    print("Value:", e)
+    # print("Move:", best_state.last_move)
+    print("Move:", root.best_state.last_move)
+    print("Value:", root.best_state.e)
     print("Number of Nodes Visited:", num_nodes_visited)
     print("Number of Nodes Evaluated:", num_of_e)
     print("Max Depth Reached:", max_depth_reached)
     print("Avg Effective Branching Factor:", round(avg_factor, 1))
+    print()
+    print('Time used:', elapsed_time)
