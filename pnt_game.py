@@ -426,10 +426,17 @@ if __name__ == '__main__':
     max_tree_depth = 0
 
     # ----------------------------------------------test case-----------------------------------------------
-    # python pnt_game.py PNT_Player 3 0 0
-    # python pnt_game.py PNT_Player 7 1 1 2
-    # python pnt_game.py PNT_Player 10 3 4 2 6 4
-    # python pnt_game.py PNT_Player 7 3 1 4 2 3
+    #1 python pnt_game.py PNT_Player 3 0 0
+    #2 python pnt_game.py PNT_Player 7 1 1 2
+    #3 python pnt_game.py PNT_Player 10 3 4 2 6 4
+    #4 python pnt_game.py PNT_Player 7 3 1 4 2 3
+
+    #5 python pnt_game.py PNT_Player 7 1 1 3
+    #6 python pnt_game.py PNT_Player 7 2 1 3 2
+    #7 python pnt_game.py PNT_Player 7 2 3 6 3
+    #8 python pnt_game.py PNT_Player 10 3 1 3 6 4
+    #9 python pnt_game.py PNT_Player 10 1 3 4
+    #0 python pnt_game.py PNT_Player 10 3 3 6 2 4
     # ----------------------------------------------test case-----------------------------------------------
     num_token, num_taken_token, taken_token, depth = PNT_Player.read_arg()
     user_input = PNT_Player.generate_input_list(num_token, taken_token)
