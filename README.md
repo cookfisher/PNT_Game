@@ -21,4 +21,7 @@ To implement the Alpha-Beta pruning algorithm to play a two-player game called P
 - *Output_10_cases.txt*  
 	: Return the outputs of ten test cases.  
 	
-- *README.md*
+- *README.md* 
+</br>
+---
+[**Demo Slides**](https://docs.google.com/presentation/d/1Ptub-qMWnZGarReApXtPDY3AskvWDgDkEFofG0uRf4A/edit?usp=sharing)
