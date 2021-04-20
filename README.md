@@ -25,5 +25,3 @@ To implement the Alpha-Beta pruning algorithm to play a two-player game called P
 	
 - *README.md* 
 
-
-[Demo Slides](https://docs.google.com/presentation/d/1Ptub-qMWnZGarReApXtPDY3AskvWDgDkEFofG0uRf4A/edit?usp=sharing)
