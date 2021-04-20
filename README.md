@@ -16,9 +16,9 @@ To implement the Alpha-Beta pruning algorithm to play a two-player game called P
 	3. Help function to generate unused token list based on the number of token.  
 
 - *Testcase10.txt*  
-	Provide ten test cases based on the requirement.  
+	:Provide ten test cases based on the requirement.  
 
 - *Output_10_cases.txt*  
-	Return the outputs of ten test cases.  
+	:Return the outputs of ten test cases.  
 	
 - *README.md*
