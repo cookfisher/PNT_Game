@@ -1,6 +1,7 @@
 # PNT_Game
 https://github.com/cookfisher/PNT_Game/  
-[Demo Slides](https://docs.google.com/presentation/d/1Ptub-qMWnZGarReApXtPDY3AskvWDgDkEFofG0uRf4A/edit?usp=sharing)
+
+**[Demo Slides](https://docs.google.com/presentation/d/1Ptub-qMWnZGarReApXtPDY3AskvWDgDkEFofG0uRf4A/edit?usp=sharing)**
 
 To implement the Alpha-Beta pruning algorithm to play a two-player game called PNT: pick numbered-tokens.  
 
